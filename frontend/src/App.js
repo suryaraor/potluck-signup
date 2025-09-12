@@ -570,10 +570,16 @@ function PotluckView() {
                     onClick={() => userName ? selectMenuItem(item) : setError('Please select your name first (click the ? icon in top right)')}
                     disabled={!userName}
                   >
-                    {item.dish}
-                    {!hasAnyGuests && <span className="needs-someone">🍽️</span>}
+                    <div className="dish-name">{item.dish}</div>
+                    {hasAnyGuests ? (
+                      <div className="dish-guests-inline">
+                        {dishGuests.map(guest => guest.name).join(', ')}
+                      </div>
+                    ) : (
+                      <span className="needs-someone">🍽️ Need someone</span>
+                    )}
                   </button>
-                  {dishGuests.length > 0 && (
+                  {userName && dishGuests.length > 0 && (
                     <div className="dish-guests">
                       {dishGuests.map(guest => (
                         <div key={guest.id} className="guest-tag">

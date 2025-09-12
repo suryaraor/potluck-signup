@@ -482,10 +482,32 @@ body {
   color: #333;
   text-align: center;
   display: inline-flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  white-space: nowrap;
+  white-space: normal;
   line-height: 1.2;
+  gap: 4px;
+  min-height: 50px;
+}
+
+.dish-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.dish-guests-inline {
+  font-size: 0.8rem;
+  color: #666;
+  font-weight: normal;
+  text-align: center;
+}
+
+.needs-someone {
+  font-size: 0.8rem;
+  color: #999;
+  font-style: italic;
 }
 
 .menu-button:hover {
