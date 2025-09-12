@@ -484,6 +484,33 @@ app.post('/potlucks/:id/menu/with-user', async (req, res) => {
   }
 });
 
+// Update family count for a guest
+app.put('/potlucks/:potluckId/guests/family-count/:guestName', async (req, res) => {
+  const guestName = decodeURIComponent(req.params.guestName);
+  const { family_count } = req.body;
+  
+  try {
+    if (family_count < 1) {
+      return res.status(400).json({ error: 'Family count must be at least 1' });
+    }
+
+    let sql, params;
+    if (isProduction && process.env.DATABASE_URL) {
+      sql = 'UPDATE guests SET family_count = $1 WHERE name = $2 AND potluck_id = $3';
+      params = [family_count, guestName, req.params.potluckId];
+    } else {
+      sql = 'UPDATE guests SET family_count = ? WHERE name = ? AND potluck_id = ?';
+      params = [family_count, guestName, req.params.potluckId];
+    }
+    
+    await queryDB(sql, params);
+    res.json({ success: true, message: 'Family count updated' });
+  } catch (err) {
+    console.error('Update family count error:', err);
+    res.status(500).json({ error: 'Failed to update family count' });
+  }
+});
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ 
