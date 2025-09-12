@@ -204,6 +204,7 @@ function PotluckView() {
   const [guests, setGuests] = useState([]);
   const [userName, setUserName] = useState('');
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const [showWhoAreYouOverlay, setShowWhoAreYouOverlay] = useState(false);
   const [sectionsExpanded, setSectionsExpanded] = useState({
     menu: true,
     guests: true
@@ -216,6 +217,9 @@ function PotluckView() {
     const storedUserName = localStorage.getItem('potluckUserName');
     if (storedUserName) {
       setUserName(storedUserName);
+    } else {
+      // Show "Who are you" overlay if no user is selected
+      setShowWhoAreYouOverlay(true);
     }
     loadPotluckData();
   }, [id]);
@@ -261,11 +265,13 @@ function PotluckView() {
   const selectGuest = (guestName) => {
     setUserName(guestName);
     localStorage.setItem('potluckUserName', guestName);
+    setShowWhoAreYouOverlay(false);
+    setShowProfileDropdown(false);
   };
 
   const selectMenuItem = async (menuItem) => {
     if (!userName) {
-      setError('Please select your name first');
+      setShowWhoAreYouOverlay(true);
       return;
     }
 
@@ -567,8 +573,8 @@ function PotluckView() {
                 <div key={item.id} className="menu-item-container">
                   <button 
                     className={`menu-button ${userHasSelected ? 'selected' : ''} ${!hasAnyGuests ? 'unselected' : ''} ${!userName ? 'disabled' : ''}`}
-                    onClick={() => userName ? selectMenuItem(item) : setError('Please select your name first (click the ? icon in top right)')}
-                    disabled={!userName}
+                    onClick={() => userName ? selectMenuItem(item) : setShowWhoAreYouOverlay(true)}
+                    disabled={false}
                   >
                     <div className="dish-name">{item.dish}</div>
                     {hasAnyGuests ? (
@@ -680,6 +686,37 @@ function PotluckView() {
         </div> {/* End collapsible-content */}
       </div>
       </div> {/* End main-content */}
+
+      {/* Who are you overlay */}
+      {showWhoAreYouOverlay && (
+        <div className="overlay">
+          <div className="overlay-content">
+            <h2>Who are you?</h2>
+            <p>Please select your name to sign up for dishes</p>
+            {availableGuests.length > 0 ? (
+              <div className="guest-buttons-overlay">
+                {availableGuests.map(guest => (
+                  <button 
+                    key={guest.id} 
+                    className="guest-button-overlay"
+                    onClick={() => selectGuest(guest.name)}
+                  >
+                    {guest.name}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <p>No guests available. Please add guests first.</p>
+            )}
+            <button 
+              className="btn btn-secondary"
+              onClick={() => setShowWhoAreYouOverlay(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
