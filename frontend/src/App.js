@@ -843,7 +843,33 @@ function PotluckView() {
             <h2>Potluck Summary</h2>
             <div className="summary-content">
               <pre className="summary-text">
-{`Potluck Summary:
+{(() => {
+  // Create signedUpGuests for summary
+  const summarySignedUpGuests = [];
+  guests.forEach(guest => {
+    if (guest.dish_ids && guest.dish_ids.length > 0) {
+      guest.dish_ids.forEach((dishId, index) => {
+        summarySignedUpGuests.push({
+          guest_id: guest.id,
+          name: guest.name,
+          dish_id: dishId,
+          quantity: guest.quantities[index] || 1,
+          family_count: guest.family_count
+        });
+      });
+    }
+  });
+  
+  // Create guestsByDish for summary
+  const summaryGuestsByDish = {};
+  summarySignedUpGuests.forEach(guest => {
+    if (!summaryGuestsByDish[guest.dish_id]) {
+      summaryGuestsByDish[guest.dish_id] = [];
+    }
+    summaryGuestsByDish[guest.dish_id].push(guest);
+  });
+  
+  return `Potluck Summary:
 
 Event: ${potluck?.name || 'Untitled Potluck'}
 Date & Time: ${potluck?.event_datetime ? new Date(potluck.event_datetime).toLocaleString() : 'Not set'}
@@ -855,21 +881,73 @@ Total Family Members: ${guests.reduce((sum, guest) => sum + (guest.family_count 
 Guest List: ${guests.map(guest => guest.name).join(', ')}
 
 Dish Signups:
-${menu.map(dish => 
-  `• ${dish.dish || dish.name} - ${
-    dish.guest_name ? `Brought by: ${dish.guest_name}` : 'Still needed'
-  }`
-).join('\n')}
+${(() => {
+  // Group dishes by guest
+  const dishesByGuest = {};
+  summarySignedUpGuests.forEach(guest => {
+    if (!dishesByGuest[guest.name]) {
+      dishesByGuest[guest.name] = [];
+    }
+    const dish = menu.find(d => d.id === guest.dish_id);
+    if (dish) {
+      dishesByGuest[guest.name].push(dish.dish || dish.name);
+    }
+  });
+  
+  // Create guest summary lines
+  const guestLines = Object.entries(dishesByGuest).map(([guestName, dishes]) => {
+    return `• ${guestName}: ${dishes.join(', ')}`;
+  });
+  
+  // Add unassigned dishes
+  const assignedDishIds = new Set(summarySignedUpGuests.map(g => g.dish_id));
+  const unassignedDishes = menu.filter(dish => !assignedDishIds.has(dish.id));
+  const unassignedLines = unassignedDishes.map(dish => `• ${dish.dish || dish.name} - Still needed`);
+  
+  return [...guestLines, ...unassignedLines].join('\n');
+})()}
 
 Dishes Still Needed:
-${menu.filter(dish => !dish.guest_name).map(dish => `• ${dish.dish || dish.name}`).join('\n') || '• All dishes are assigned!'}
-`}
+${(() => {
+  const assignedDishIds = new Set(summarySignedUpGuests.map(g => g.dish_id));
+  const unassignedDishes = menu.filter(dish => !assignedDishIds.has(dish.id));
+  return unassignedDishes.length > 0 
+    ? unassignedDishes.map(dish => `• ${dish.dish || dish.name}`).join('\n')
+    : '• All dishes are assigned!';
+})()}
+`;
+})()}
               </pre>
             </div>
             <div className="summary-actions">
               <button 
                 className="btn btn-primary"
                 onClick={() => {
+                  // Create signedUpGuests for copy action
+                  const copySignedUpGuests = [];
+                  guests.forEach(guest => {
+                    if (guest.dish_ids && guest.dish_ids.length > 0) {
+                      guest.dish_ids.forEach((dishId, index) => {
+                        copySignedUpGuests.push({
+                          guest_id: guest.id,
+                          name: guest.name,
+                          dish_id: dishId,
+                          quantity: guest.quantities[index] || 1,
+                          family_count: guest.family_count
+                        });
+                      });
+                    }
+                  });
+                  
+                  // Create guestsByDish for copy action
+                  const copyGuestsByDish = {};
+                  copySignedUpGuests.forEach(guest => {
+                    if (!copyGuestsByDish[guest.dish_id]) {
+                      copyGuestsByDish[guest.dish_id] = [];
+                    }
+                    copyGuestsByDish[guest.dish_id].push(guest);
+                  });
+                  
                   const summaryText = `Potluck Summary:
 
 Event: ${potluck?.name || 'Untitled Potluck'}
@@ -882,14 +960,40 @@ Total Family Members: ${guests.reduce((sum, guest) => sum + (guest.family_count 
 Guest List: ${guests.map(guest => guest.name).join(', ')}
 
 Dish Signups:
-${menu.map(dish => 
-  `• ${dish.dish || dish.name} - ${
-    dish.guest_name ? `Brought by: ${dish.guest_name}` : 'Still needed'
-  }`
-).join('\n')}
+${(() => {
+  // Group dishes by guest
+  const dishesByGuest = {};
+  copySignedUpGuests.forEach(guest => {
+    if (!dishesByGuest[guest.name]) {
+      dishesByGuest[guest.name] = [];
+    }
+    const dish = menu.find(d => d.id === guest.dish_id);
+    if (dish) {
+      dishesByGuest[guest.name].push(dish.dish || dish.name);
+    }
+  });
+  
+  // Create guest summary lines
+  const guestLines = Object.entries(dishesByGuest).map(([guestName, dishes]) => {
+    return `• ${guestName}: ${dishes.join(', ')}`;
+  });
+  
+  // Add unassigned dishes
+  const assignedDishIds = new Set(copySignedUpGuests.map(g => g.dish_id));
+  const unassignedDishes = menu.filter(dish => !assignedDishIds.has(dish.id));
+  const unassignedLines = unassignedDishes.map(dish => `• ${dish.dish || dish.name} - Still needed`);
+  
+  return [...guestLines, ...unassignedLines].join('\n');
+})()}
 
 Dishes Still Needed:
-${menu.filter(dish => !dish.guest_name).map(dish => `• ${dish.dish || dish.name}`).join('\n') || '• All dishes are assigned!'}
+${(() => {
+  const assignedDishIds = new Set(copySignedUpGuests.map(g => g.dish_id));
+  const unassignedDishes = menu.filter(dish => !assignedDishIds.has(dish.id));
+  return unassignedDishes.length > 0 
+    ? unassignedDishes.map(dish => `• ${dish.dish || dish.name}`).join('\n')
+    : '• All dishes are assigned!';
+})()}
 `;
                   navigator.clipboard.writeText(summaryText).then(() => {
                     alert('Summary copied to clipboard!');
