@@ -569,6 +569,61 @@ app.put('/potlucks/:potluckId/guests/family-count/:guestName', async (req, res) 
   }
 });
 
+// Rename a guest
+app.put('/potlucks/:potluckId/guests/rename/:guestName', async (req, res) => {
+  const oldGuestName = decodeURIComponent(req.params.guestName);
+  const { new_name } = req.body;
+  
+  try {
+    if (!new_name || !new_name.trim()) {
+      return res.status(400).json({ error: 'New name is required' });
+    }
+
+    const trimmedNewName = new_name.trim();
+    
+    // Check if the new name already exists for this potluck
+    let checkSql, checkParams;
+    if (isProduction && process.env.DATABASE_URL) {
+      checkSql = 'SELECT id FROM guests WHERE name = $1 AND potluck_id = $2 LIMIT 1';
+      checkParams = [trimmedNewName, req.params.potluckId];
+    } else {
+      checkSql = 'SELECT id FROM guests WHERE name = ? AND potluck_id = ? LIMIT 1';
+      checkParams = [trimmedNewName, req.params.potluckId];
+    }
+    
+    const existingGuest = await queryDB(checkSql, checkParams);
+    if (existingGuest.length > 0) {
+      return res.status(400).json({ error: 'A guest with that name already exists' });
+    }
+
+    // Update the guest name
+    let sql, params;
+    if (isProduction && process.env.DATABASE_URL) {
+      sql = 'UPDATE guests SET name = $1 WHERE name = $2 AND potluck_id = $3';
+      params = [trimmedNewName, oldGuestName, req.params.potluckId];
+    } else {
+      sql = 'UPDATE guests SET name = ? WHERE name = ? AND potluck_id = ?';
+      params = [trimmedNewName, oldGuestName, req.params.potluckId];
+    }
+    
+    const result = await queryDB(sql, params);
+    
+    if (result.changes === 0) {
+      return res.status(404).json({ error: 'Guest not found' });
+    }
+    
+    res.json({ 
+      success: true, 
+      message: 'Guest name updated',
+      old_name: oldGuestName,
+      new_name: trimmedNewName
+    });
+  } catch (err) {
+    console.error('Rename guest error:', err);
+    res.status(500).json({ error: 'Failed to rename guest' });
+  }
+});
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ 

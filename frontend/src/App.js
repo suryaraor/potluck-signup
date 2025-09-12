@@ -236,6 +236,8 @@ function PotluckView() {
   const [dishNotes, setDishNotes] = useState({});
   const [showEditDishModal, setShowEditDishModal] = useState(false);
   const [editDishName, setEditDishName] = useState('');
+  const [editingGuestName, setEditingGuestName] = useState(null);
+  const [editGuestValue, setEditGuestValue] = useState('');
   const [sectionsExpanded, setSectionsExpanded] = useState({
     menu: true,
     guests: true
@@ -485,6 +487,55 @@ function PotluckView() {
     }
   };
 
+  const startEditingGuestName = (guestName) => {
+    setEditingGuestName(guestName);
+    setEditGuestValue(guestName);
+  };
+
+  const cancelEditingGuestName = () => {
+    setEditingGuestName(null);
+    setEditGuestValue('');
+  };
+
+  const saveGuestName = async () => {
+    if (!editGuestValue.trim()) {
+      setError('Please enter a valid name');
+      return;
+    }
+
+    if (editGuestValue.trim() === editingGuestName) {
+      // No change, just cancel
+      cancelEditingGuestName();
+      return;
+    }
+
+    try {
+      await axios.put(`${API}/potlucks/${id}/guests/rename/${encodeURIComponent(editingGuestName)}`, {
+        new_name: editGuestValue.trim()
+      });
+      setSuccess(`Renamed ${editingGuestName} to ${editGuestValue.trim()}!`);
+      
+      // Update local user name if they changed their own name
+      if (userName === editingGuestName) {
+        setUserName(editGuestValue.trim());
+        localStorage.setItem('potluckUserName', editGuestValue.trim());
+      }
+      
+      cancelEditingGuestName();
+      loadPotluckData();
+    } catch (err) {
+      setError(`Failed to rename guest: ${err.response?.data?.error || err.message}`);
+    }
+  };
+
+  const handleGuestNameKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      saveGuestName();
+    } else if (e.key === 'Escape') {
+      cancelEditingGuestName();
+    }
+  };
+
   const toggleSection = (section) => {
     setSectionsExpanded(prev => ({
       ...prev,
@@ -683,7 +734,7 @@ function PotluckView() {
               const itemNotes = dishNotes[item.id] || [];
               
               return (
-                <div key={item.id} className="menu-item-container">
+                <div key={item.id} className={`menu-item-container ${!hasAnyGuests ? 'unassigned' : 'assigned'}`}>
                   <button 
                     className={`menu-button ${userHasSelected ? 'selected' : ''} ${!hasAnyGuests ? 'unselected' : ''} ${!userName ? 'disabled' : ''}`}
                     onClick={() => userName ? selectMenuItem(item) : setShowWhoAreYouOverlay(true)}
@@ -768,7 +819,43 @@ function PotluckView() {
               
               return (
                 <div key={guestName} className="compact-guest-item">
-                  <span className="guest-name">{guestName}</span>
+                  {editingGuestName === guestName ? (
+                    <div className="guest-name-edit">
+                      <input
+                        type="text"
+                        value={editGuestValue}
+                        onChange={(e) => setEditGuestValue(e.target.value)}
+                        onKeyDown={handleGuestNameKeyPress}
+                        autoFocus
+                        className="guest-name-input"
+                        placeholder="Guest name"
+                      />
+                      <div className="edit-guest-buttons">
+                        <button 
+                          className="save-guest-btn"
+                          onClick={saveGuestName}
+                          title="Save"
+                        >
+                          ✓
+                        </button>
+                        <button 
+                          className="cancel-guest-btn"
+                          onClick={cancelEditingGuestName}
+                          title="Cancel"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <span 
+                      className="guest-name editable"
+                      onClick={() => startEditingGuestName(guestName)}
+                      title="Click to edit name"
+                    >
+                      {guestName}
+                    </span>
+                  )}
                   <div className="compact-counter">
                     <button 
                       className="compact-btn minus"
