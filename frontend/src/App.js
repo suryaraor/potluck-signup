@@ -439,6 +439,11 @@ function PotluckView() {
     guestsByDish[guest.dish_id].push(guest);
   });
 
+  // Get unique guest names for the dropdown
+  const availableGuests = guests.filter((guest, index, self) => 
+    index === self.findIndex(g => g.name === guest.name)
+  );
+
   return (
     <div className="app">
       <div className="header">
@@ -519,16 +524,20 @@ function PotluckView() {
 
       <div className="main-content">
         {/* Menu Selection */}
-        {userName && (
         <div className="card">
           <div className="collapsible-header" onClick={() => toggleSection('menu')}>
-            <h2>Select Your Dishes</h2>
+            <h2>{userName ? 'Select Your Dishes' : 'Menu Items'}</h2>
             <button className={`expand-icon ${sectionsExpanded.menu ? 'expanded' : ''}`}>
               ▼
             </button>
           </div>
           <div className={`collapsible-content ${sectionsExpanded.menu ? 'expanded' : 'collapsed'}`}>
-          {userSelections.length > 0 && (
+          {!userName && (
+            <div className="info-message">
+              Click on your profile icon (top right) to select your name and sign up for dishes.
+            </div>
+          )}
+          {userName && userSelections.length > 0 && (
             <div className="current-selection">
               Your selections: <strong>{userSelections.map(s => {
                 const dish = menu.find(m => m.id === s.dish_id);
@@ -557,8 +566,9 @@ function PotluckView() {
               return (
                 <div key={item.id} className="menu-item-container">
                   <button 
-                    className={`menu-button ${userHasSelected ? 'selected' : ''} ${!hasAnyGuests ? 'unselected' : ''}`}
-                    onClick={() => selectMenuItem(item)}
+                    className={`menu-button ${userHasSelected ? 'selected' : ''} ${!hasAnyGuests ? 'unselected' : ''} ${!userName ? 'disabled' : ''}`}
+                    onClick={() => userName ? selectMenuItem(item) : setError('Please select your name first (click the ? icon in top right)')}
+                    disabled={!userName}
                   >
                     {item.dish}
                     {!hasAnyGuests && <span className="needs-someone">🍽️</span>}
@@ -596,7 +606,6 @@ function PotluckView() {
           </div>
           </div> {/* End collapsible-content */}
         </div>
-      )}
 
       {/* Who's Coming */}
       <div className="card">

@@ -2,6 +2,8 @@
 
 A simple web app for organizing potlucks. Anyone can create a new potluck, edit the menu, sign up as a guest, and view the total guest list to help plan quantities.
 
+backend URL https://potluck-signup-7eed.onrender.com
+
 ## Features
 - 🎉 Create new potluck events with name and date
 - 📝 Edit menu items for each potluck
