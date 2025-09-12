@@ -573,30 +573,29 @@ function PotluckView() {
                     <div className="dish-name">{item.dish}</div>
                     {hasAnyGuests ? (
                       <div className="dish-guests-inline">
-                        {dishGuests.map(guest => guest.name).join(', ')}
+                        {dishGuests.map((guest, index) => (
+                          <span key={guest.id} className="guest-name-inline">
+                            {guest.name}
+                            {guest.name === userName && (
+                              <button 
+                                className="remove-btn-inline"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  removeUserDish(guest.guest_id, guest.dish_id);
+                                }}
+                                title="Remove this dish"
+                              >
+                                ×
+                              </button>
+                            )}
+                            {index < dishGuests.length - 1 && ', '}
+                          </span>
+                        ))}
                       </div>
                     ) : (
                       <span className="needs-someone">🍽️ Need someone</span>
                     )}
                   </button>
-                  {userName && dishGuests.length > 0 && (
-                    <div className="dish-guests">
-                      {dishGuests.map(guest => (
-                        <div key={guest.id} className="guest-tag">
-                          <span>{guest.name}</span>
-                          {guest.name === userName && (
-                            <button 
-                              className="remove-btn"
-                              onClick={() => removeUserDish(guest.guest_id, guest.dish_id)}
-                              title="Remove this dish"
-                            >
-                              ×
-                            </button>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </div>
               );
             })}
