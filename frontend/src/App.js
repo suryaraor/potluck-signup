@@ -234,6 +234,8 @@ function PotluckView() {
   const [showNoteForm, setShowNoteForm] = useState(false);
   const [noteText, setNoteText] = useState('');
   const [dishNotes, setDishNotes] = useState({});
+  const [showEditDishModal, setShowEditDishModal] = useState(false);
+  const [editDishName, setEditDishName] = useState('');
   const [sectionsExpanded, setSectionsExpanded] = useState({
     menu: true,
     guests: true
@@ -393,6 +395,32 @@ function PotluckView() {
     } catch (err) {
       setError('Failed to add new dish');
     }
+  };
+
+  const editDish = async () => {
+    if (!editDishName.trim()) {
+      setError('Please enter a dish name');
+      return;
+    }
+
+    try {
+      await axios.put(`${API}/potlucks/${id}/menu/${selectedDish.id}`, {
+        dish: editDishName.trim()
+      });
+      setSuccess(`Updated dish to "${editDishName.trim()}"`);
+      setShowEditDishModal(false);
+      setShowDishActionModal(false);
+      setEditDishName('');
+      loadPotluckData();
+    } catch (err) {
+      setError('Failed to update dish');
+      console.error('Edit dish error:', err);
+    }
+  };
+
+  const openEditDishModal = () => {
+    setEditDishName(selectedDish.dish || selectedDish.name);
+    setShowEditDishModal(true);
   };
 
   const addNewGuest = async () => {
@@ -787,6 +815,12 @@ function PotluckView() {
               >
                 💬 Add Note
               </button>
+              <button 
+                className="btn btn-secondary"
+                onClick={openEditDishModal}
+              >
+                ✏️ Edit Dish
+              </button>
             </div>
             <button 
               className="btn btn-outline"
@@ -827,6 +861,41 @@ function PotluckView() {
                 onClick={() => {
                   setShowNoteForm(false);
                   setNoteText('');
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Dish Modal */}
+      {showEditDishModal && selectedDish && (
+        <div className="overlay">
+          <div className="overlay-content">
+            <h2>Edit Dish</h2>
+            <input
+              type="text"
+              className="form-input"
+              value={editDishName}
+              onChange={(e) => setEditDishName(e.target.value)}
+              placeholder="Enter dish name"
+              style={{ width: '100%', marginBottom: '15px', padding: '8px' }}
+            />
+            <div className="modal-buttons">
+              <button 
+                className="btn btn-primary"
+                onClick={editDish}
+                disabled={!editDishName.trim()}
+              >
+                Save Changes
+              </button>
+              <button 
+                className="btn btn-secondary"
+                onClick={() => {
+                  setShowEditDishModal(false);
+                  setEditDishName('');
                 }}
               >
                 Cancel

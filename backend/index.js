@@ -277,6 +277,43 @@ app.post('/potlucks/:id/menu', async (req, res) => {
   }
 });
 
+app.put('/potlucks/:id/menu/:menuId', async (req, res) => {
+  const { dish } = req.body;
+  const potluckId = req.params.id;
+  const menuId = req.params.menuId;
+  
+  try {
+    let sql, params;
+    if (isProduction && process.env.DATABASE_URL) {
+      sql = 'UPDATE menu_items SET dish = $1 WHERE id = $2 AND potluck_id = $3 RETURNING *';
+      params = [dish, menuId, potluckId];
+    } else {
+      sql = 'UPDATE menu_items SET dish = ? WHERE id = ? AND potluck_id = ?';
+      params = [dish, menuId, potluckId];
+    }
+    
+    const result = await queryDB(sql, params);
+    
+    if (isProduction && process.env.DATABASE_URL) {
+      if (result.rows && result.rows.length === 0) {
+        return res.status(404).json({ error: 'Menu item not found' });
+      }
+      res.json(result.rows[0]);
+    } else {
+      if (result.changes === 0) {
+        return res.status(404).json({ error: 'Menu item not found' });
+      }
+      // For SQLite, fetch the updated item
+      const fetchSql = 'SELECT * FROM menu_items WHERE id = ? AND potluck_id = ?';
+      const fetchResult = await queryDB(fetchSql, [menuId, potluckId]);
+      res.json(fetchResult[0]);
+    }
+  } catch (err) {
+    console.error('Update menu item error:', err);
+    res.status(500).json({ error: 'Failed to update menu item' });
+  }
+});
+
 app.get('/potlucks/:id/guests', async (req, res) => {
   try {
     let sql, params;
