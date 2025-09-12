@@ -205,6 +205,11 @@ function PotluckView() {
   const [userName, setUserName] = useState('');
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showWhoAreYouOverlay, setShowWhoAreYouOverlay] = useState(false);
+  const [showDishActionModal, setShowDishActionModal] = useState(false);
+  const [selectedDish, setSelectedDish] = useState(null);
+  const [showNoteForm, setShowNoteForm] = useState(false);
+  const [noteText, setNoteText] = useState('');
+  const [dishNotes, setDishNotes] = useState({});
   const [sectionsExpanded, setSectionsExpanded] = useState({
     menu: true,
     guests: true
@@ -269,12 +274,18 @@ function PotluckView() {
     setShowProfileDropdown(false);
   };
 
-  const selectMenuItem = async (menuItem) => {
+  const selectMenuItem = (menuItem) => {
     if (!userName) {
       setShowWhoAreYouOverlay(true);
       return;
     }
 
+    // Show dish action modal
+    setSelectedDish(menuItem);
+    setShowDishActionModal(true);
+  };
+
+  const signUpForDish = async (menuItem) => {
     try {
       // Check if this user already selected this specific dish
       const userGuest = guests.find(g => g.name === userName);
@@ -292,10 +303,38 @@ function PotluckView() {
         quantity: 1
       });
       setSuccess(`Added ${menuItem.dish} to your selections!`);
+      setShowDishActionModal(false);
       
       loadPotluckData();
     } catch (err) {
       setError('Failed to add selection');
+    }
+  };
+
+  const addNoteForDish = async () => {
+    if (!noteText.trim()) {
+      setError('Please enter a note');
+      return;
+    }
+
+    try {
+      // For now, store notes locally. Later we'll add backend storage
+      setDishNotes(prev => ({
+        ...prev,
+        [selectedDish.id]: [...(prev[selectedDish.id] || []), {
+          id: Date.now(),
+          text: noteText.trim(),
+          author: userName,
+          timestamp: new Date().toISOString()
+        }]
+      }));
+      
+      setSuccess('Note added successfully!');
+      setNoteText('');
+      setShowNoteForm(false);
+      setShowDishActionModal(false);
+    } catch (err) {
+      setError('Failed to add note');
     }
   };
 
@@ -568,6 +607,7 @@ function PotluckView() {
               const dishGuests = guestsByDish[item.id] || [];
               const userHasSelected = userSelections.some(s => s.dish_id === item.id);
               const hasAnyGuests = dishGuests.length > 0;
+              const itemNotes = dishNotes[item.id] || [];
               
               return (
                 <div key={item.id} className="menu-item-container">
@@ -600,6 +640,16 @@ function PotluckView() {
                       </div>
                     ) : (
                       <span className="needs-someone">🍽️ Need someone</span>
+                    )}
+                    {itemNotes.length > 0 && (
+                      <div className="dish-notes">
+                        {itemNotes.map(note => (
+                          <div key={note.id} className="dish-note">
+                            <span className="note-author">{note.author}:</span>
+                            <span className="note-text">{note.text}</span>
+                          </div>
+                        ))}
+                      </div>
                     )}
                   </button>
                 </div>
@@ -686,6 +736,74 @@ function PotluckView() {
         </div> {/* End collapsible-content */}
       </div>
       </div> {/* End main-content */}
+
+      {/* Dish Action Modal */}
+      {showDishActionModal && selectedDish && (
+        <div className="overlay">
+          <div className="overlay-content">
+            <h2>{selectedDish.dish}</h2>
+            <p>What would you like to do?</p>
+            <div className="modal-buttons">
+              <button 
+                className="btn btn-primary"
+                onClick={() => signUpForDish(selectedDish)}
+              >
+                🍽️ Sign Up for this Dish
+              </button>
+              <button 
+                className="btn btn-secondary"
+                onClick={() => setShowNoteForm(true)}
+              >
+                💬 Add Note
+              </button>
+            </div>
+            <button 
+              className="btn btn-outline"
+              onClick={() => {
+                setShowDishActionModal(false);
+                setShowNoteForm(false);
+                setNoteText('');
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Note Form Modal */}
+      {showNoteForm && selectedDish && (
+        <div className="overlay">
+          <div className="overlay-content">
+            <h2>Add Note for {selectedDish.dish}</h2>
+            <textarea
+              className="note-input"
+              value={noteText}
+              onChange={(e) => setNoteText(e.target.value)}
+              placeholder="Add your note here (e.g., 'bringing extra spice on the side', 'vegetarian version', etc.)"
+              rows={4}
+            />
+            <div className="modal-buttons">
+              <button 
+                className="btn btn-primary"
+                onClick={addNoteForDish}
+                disabled={!noteText.trim()}
+              >
+                Add Note
+              </button>
+              <button 
+                className="btn btn-secondary"
+                onClick={() => {
+                  setShowNoteForm(false);
+                  setNoteText('');
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Who are you overlay */}
       {showWhoAreYouOverlay && (
