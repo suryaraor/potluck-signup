@@ -403,22 +403,36 @@ function PotluckView() {
       return;
     }
 
+    console.log('Edit dish request:', {
+      url: `${API}/potlucks/${id}/menu/${selectedDish.id}`,
+      dishName: editDishName.trim(),
+      selectedDish: selectedDish,
+      id: id
+    });
+
     try {
-      await axios.put(`${API}/potlucks/${id}/menu/${selectedDish.id}`, {
+      const response = await axios.put(`${API}/potlucks/${id}/menu/${selectedDish.id}`, {
         dish: editDishName.trim()
       });
+      console.log('Edit dish response:', response.data);
       setSuccess(`Updated dish to "${editDishName.trim()}"`);
       setShowEditDishModal(false);
       setShowDishActionModal(false);
       setEditDishName('');
       loadPotluckData();
     } catch (err) {
-      setError('Failed to update dish');
-      console.error('Edit dish error:', err);
+      console.error('Edit dish error details:', {
+        error: err,
+        response: err.response?.data,
+        status: err.response?.status,
+        url: `${API}/potlucks/${id}/menu/${selectedDish.id}`
+      });
+      setError(`Failed to update dish: ${err.response?.data?.error || err.message}`);
     }
   };
 
   const openEditDishModal = () => {
+    console.log('Opening edit dish modal for:', selectedDish);
     setEditDishName(selectedDish.dish || selectedDish.name);
     setShowEditDishModal(true);
   };
