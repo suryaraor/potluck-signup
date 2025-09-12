@@ -33,6 +33,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  z-index: 1000;
 }
 
 .header h1 {
@@ -93,7 +94,7 @@ body {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   border: 1px solid #e2e8f0;
   min-width: 280px;
-  z-index: 1000;
+  z-index: 9999;
 }
 
 .profile-dropdown::before {
@@ -147,6 +148,7 @@ body {
   align-items: flex-end;
   gap: 10px;
   position: relative;
+  z-index: 9999;
 }
 
 .share-info {
