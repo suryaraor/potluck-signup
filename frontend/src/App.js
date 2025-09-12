@@ -22,6 +22,8 @@ function PotluckList() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [isHeaderMinimized, setIsHeaderMinimized] = useState(false);
+  const [showHeaderDropdown, setShowHeaderDropdown] = useState(false);
   const navigate = useNavigate();
 
   const [newPotluck, setNewPotluck] = useState({
@@ -34,6 +36,15 @@ function PotluckList() {
   useEffect(() => {
     loadPotlucks();
   }, []);
+
+  const toggleHeader = () => {
+    setIsHeaderMinimized(!isHeaderMinimized);
+    setShowHeaderDropdown(false);
+  };
+
+  const toggleHeaderDropdown = () => {
+    setShowHeaderDropdown(!showHeaderDropdown);
+  };
 
   const loadPotlucks = async () => {
     try {
@@ -117,12 +128,32 @@ function PotluckList() {
 
   return (
     <div className="app">
-      <div className="header">
-        <h1>🥗 Potluck</h1>
-        <p>Simple signup & organization</p>
-        <button className="btn-clear" onClick={clearAllData} title="Clear all data">
-          🗑️
-        </button>
+      <div className={`header ${isHeaderMinimized ? 'minimized' : 'expanded'}`}>
+        <div className="header-content">
+          {!isHeaderMinimized && (
+            <>
+              <h1>🥗 Potluck</h1>
+              <p>Simple signup & organization</p>
+            </>
+          )}
+          <div className="header-controls">
+            <button className="burger-menu" onClick={isHeaderMinimized ? toggleHeaderDropdown : toggleHeader}>
+              ☰
+            </button>
+            {!isHeaderMinimized && (
+              <button className="btn-clear" onClick={clearAllData} title="Clear all data">
+                🗑️
+              </button>
+            )}
+            {isHeaderMinimized && showHeaderDropdown && (
+              <div className="header-dropdown">
+                <button className="btn-clear" onClick={clearAllData} title="Clear all data">
+                  🗑️ Clear all
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {error && <div className="error-message">{error}</div>}
@@ -238,6 +269,8 @@ function PotluckView() {
   const [editDishName, setEditDishName] = useState('');
   const [editingGuestName, setEditingGuestName] = useState(null);
   const [editGuestValue, setEditGuestValue] = useState('');
+  const [headerExpanded, setHeaderExpanded] = useState(false);
+  const [showBurgerMenu, setShowBurgerMenu] = useState(false);
   const [sectionsExpanded, setSectionsExpanded] = useState({
     menu: true,
     guests: true
@@ -259,8 +292,11 @@ function PotluckView() {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (showProfileDropdown && !event.target.closest('.profile-section')) {
+      if (showProfileDropdown && !event.target.closest('.profile-section') && !event.target.closest('.profile-dropdown')) {
         setShowProfileDropdown(false);
+      }
+      if (showBurgerMenu && !event.target.closest('.burger-menu') && !event.target.closest('.burger-dropdown')) {
+        setShowBurgerMenu(false);
       }
     };
 
@@ -268,7 +304,7 @@ function PotluckView() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showProfileDropdown]);
+  }, [showProfileDropdown, showBurgerMenu]);
 
   const loadPotluckData = async () => {
     try {
@@ -608,33 +644,100 @@ function PotluckView() {
 
   return (
     <div className="app">
-      <div className="header">
-        <button className="back-button" onClick={() => navigate('/')}>
-          ← Back
-        </button>
-        <div>
-          <h1>{potluck?.name}</h1>
-          <p>{potluck?.date || 'No date set'}</p>
+      <div className={`header ${headerExpanded ? 'expanded' : 'minimized'}`}>
+        {/* Minimized Header */}
+        <div className="header-minimized" onClick={() => setHeaderExpanded(true)}>
+          <div className="header-title">
+            <h2>{potluck?.name}</h2>
+          </div>
+          <div className="header-actions">
+            <button 
+              className="burger-menu"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowBurgerMenu(!showBurgerMenu);
+              }}
+              title="Menu"
+            >
+              ☰
+            </button>
+          </div>
         </div>
-        <div className="profile-section">
-          <button 
-            className="summary-button"
-            onClick={() => setShowSummaryOverlay(true)}
-            title="Show potluck summary"
-          >
-            📋 Summary
-          </button>
-          <div className="share-info">
-            <small>Share this URL with guests</small>
+
+        {/* Expanded Header */}
+        {headerExpanded && (
+          <div className="header-expanded">
+            <button className="back-button" onClick={() => navigate('/')}>
+              ← Back
+            </button>
+            <div className="header-content">
+              <h1>{potluck?.name}</h1>
+              <p>{potluck?.date || 'No date set'}</p>
+            </div>
+            <div className="profile-section">
+              <button 
+                className="summary-button"
+                onClick={() => setShowSummaryOverlay(true)}
+                title="Show potluck summary"
+              >
+                📋 Summary
+              </button>
+              <div className="share-info">
+                <small>Share this URL with guests</small>
+              </div>
+              <div 
+                className={`profile-icon ${!userName ? 'no-user' : ''}`}
+                onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+                title={userName ? `Signed in as ${userName}` : 'Click to sign in'}
+              >
+                {userName ? userName.charAt(0).toUpperCase() : '?'}
+              </div>
+            </div>
+            <button 
+              className="header-collapse"
+              onClick={() => setHeaderExpanded(false)}
+              title="Minimize header"
+            >
+              ▲
+            </button>
           </div>
-          <div 
-            className={`profile-icon ${!userName ? 'no-user' : ''}`}
-            onClick={() => setShowProfileDropdown(!showProfileDropdown)}
-            title={userName ? `Signed in as ${userName}` : 'Click to sign in'}
-          >
-            {userName ? userName.charAt(0).toUpperCase() : '?'}
+        )}
+
+        {/* Burger Menu Dropdown */}
+        {showBurgerMenu && (
+          <div className="burger-dropdown">
+            <button 
+              className="burger-item"
+              onClick={() => {
+                navigate('/');
+                setShowBurgerMenu(false);
+              }}
+            >
+              🏠 Home
+            </button>
+            <button 
+              className="burger-item"
+              onClick={() => {
+                setShowSummaryOverlay(true);
+                setShowBurgerMenu(false);
+              }}
+            >
+              📋 Summary
+            </button>
+            <button 
+              className="burger-item"
+              onClick={() => {
+                setShowProfileDropdown(true);
+                setShowBurgerMenu(false);
+              }}
+            >
+              👤 Profile
+            </button>
           </div>
-          {showProfileDropdown && (
+        )}
+
+        {/* Profile Dropdown (only show when burger menu requests it or when header is expanded) */}
+        {(showProfileDropdown && (headerExpanded || showBurgerMenu)) && (
             <div className="profile-dropdown">
               {userName ? (
                 <div className="current-user-profile">
@@ -684,8 +787,7 @@ function PotluckView() {
                 </div>
               )}
             </div>
-          )}
-        </div>
+        )}
       </div>
 
       {error && <div className="error-message">{error}</div>}
@@ -811,11 +913,15 @@ function PotluckView() {
           <div className="empty-message">No one added yet</div>
         ) : (
           <div className="compact-guest-list">
-            {/* Compact guest display in rows */}
-            {[...new Set(guests.map(g => g.name))].map(guestName => {
-              // Get the family count for this guest (from any of their records)
-              const guestRecord = guests.find(g => g.name === guestName);
-              const familyCount = guestRecord?.family_count || 1;
+            {/* Compact guest display in rows - sorted by family count (largest to smallest) */}
+            {[...new Set(guests.map(g => g.name))]
+              .map(guestName => {
+                const guestRecord = guests.find(g => g.name === guestName);
+                const familyCount = guestRecord?.family_count || 1;
+                return { name: guestName, familyCount, guestRecord };
+              })
+              .sort((a, b) => b.familyCount - a.familyCount) // Sort by family count descending
+              .map(({ name: guestName, familyCount, guestRecord }) => {
               
               return (
                 <div key={guestName} className="compact-guest-item">
@@ -856,23 +962,41 @@ function PotluckView() {
                       {guestName}
                     </span>
                   )}
-                  <div className="compact-counter">
-                    <button 
-                      className="compact-btn minus"
-                      onClick={() => updateFamilyCount(guestName, familyCount - 1)}
-                      disabled={familyCount <= 1}
-                      title="Decrease"
-                    >
-                      −
-                    </button>
-                    <span className="count-badge">{familyCount}</span>
-                    <button 
-                      className="compact-btn plus"
-                      onClick={() => updateFamilyCount(guestName, familyCount + 1)}
-                      title="Increase"
-                    >
-                      +
-                    </button>
+                  <div className="guest-info-section">
+                    <span className="family-size-badge" title={`${familyCount} ${familyCount === 1 ? 'person' : 'people'}`}>
+                      {familyCount} 👥
+                    </span>
+                    <div className="family-counter">
+                      {[1, 2, 3, 4, 5].map(count => (
+                        <button
+                          key={count}
+                          className={`family-icon-btn ${familyCount >= count ? 'active' : 'inactive'}`}
+                          onClick={() => updateFamilyCount(guestName, count)}
+                          title={`${count} ${count === 1 ? 'person' : 'people'}`}
+                        >
+                          👤
+                        </button>
+                      ))}
+                      {familyCount > 5 && (
+                        <div className="large-family">
+                          <button 
+                            className="family-icon-btn active"
+                            onClick={() => updateFamilyCount(guestName, Math.max(1, familyCount - 1))}
+                            title="Decrease"
+                          >
+                            ➖
+                          </button>
+                          <span className="large-count">{familyCount}</span>
+                          <button 
+                            className="family-icon-btn active"
+                            onClick={() => updateFamilyCount(guestName, familyCount + 1)}
+                            title="Increase"
+                          >
+                            ➕
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <button 
                     className="compact-remove"
