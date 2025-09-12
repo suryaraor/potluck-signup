@@ -889,6 +889,36 @@ button:active, .btn:active {
   color: #d73027;
 }
 
+/* External Remove Button (outside menu button) */
+.remove-buttons-container {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  justify-content: center;
+}
+
+.remove-btn-external {
+  background: #fff3f3;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.remove-btn-external:hover {
+  background: #fef2f2;
+  border-color: #f87171;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
+}
+
 /* Who Are You Overlay */
 .overlay {
   position: fixed;

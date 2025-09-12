@@ -848,18 +848,6 @@ function PotluckView() {
                         {dishGuests.map((guest, index) => (
                           <span key={guest.id} className="guest-name-inline">
                             {guest.name}
-                            {guest.name === userName && (
-                              <button 
-                                className="remove-btn-inline"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  removeUserDish(guest.guest_id, guest.dish_id);
-                                }}
-                                title="Remove this dish"
-                              >
-                                ×
-                              </button>
-                            )}
                             {index < dishGuests.length - 1 && ', '}
                           </span>
                         ))}
@@ -867,17 +855,37 @@ function PotluckView() {
                     ) : (
                       <span className="needs-someone">🍽️ Need someone</span>
                     )}
-                    {itemNotes.length > 0 && (
-                      <div className="dish-notes">
-                        {itemNotes.map(note => (
-                          <div key={note.id} className="dish-note">
-                            <span className="note-author">{note.author}:</span>
-                            <span className="note-text">{note.text}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
                   </button>
+                  {hasAnyGuests && dishGuests.some(guest => guest.name === userName) && (
+                    <div className="remove-buttons-container">
+                      {dishGuests
+                        .filter(guest => guest.name === userName)
+                        .map(guest => (
+                          <button 
+                            key={guest.id}
+                            className="remove-btn-external"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeUserDish(guest.guest_id, guest.dish_id);
+                            }}
+                            title="Remove this dish"
+                          >
+                            × Remove
+                          </button>
+                        ))
+                      }
+                    </div>
+                  )}
+                  {itemNotes.length > 0 && (
+                    <div className="dish-notes">
+                      {itemNotes.map(note => (
+                        <div key={note.id} className="dish-note">
+                          <span className="note-author">{note.author}:</span>
+                          <span className="note-text">{note.text}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               );
             })}
