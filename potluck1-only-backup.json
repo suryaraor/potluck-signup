@@ -1,0 +1,231 @@
+﻿{
+    "timestamp":  "2025-09-12 08:21:48",
+    "potlucks":  [
+                     {
+                         "date":  [
+                                      "2025-09-15",
+                                      "2025-09-15"
+                                  ],
+                         "menu":  {
+                                      "value":  [
+                                                    {
+                                                        "id":  1,
+                                                        "potluck_id":  1,
+                                                        "dish":  "sambaar"
+                                                    },
+                                                    {
+                                                        "id":  2,
+                                                        "potluck_id":  1,
+                                                        "dish":  "tomoto chutney"
+                                                    },
+                                                    {
+                                                        "id":  3,
+                                                        "potluck_id":  1,
+                                                        "dish":  "plain rice"
+                                                    },
+                                                    {
+                                                        "id":  4,
+                                                        "potluck_id":  1,
+                                                        "dish":  "curd"
+                                                    },
+                                                    {
+                                                        "id":  5,
+                                                        "potluck_id":  1,
+                                                        "dish":  "papad"
+                                                    },
+                                                    {
+                                                        "id":  6,
+                                                        "potluck_id":  1,
+                                                        "dish":  "gravy curry"
+                                                    },
+                                                    {
+                                                        "id":  7,
+                                                        "potluck_id":  1,
+                                                        "dish":  "chapati"
+                                                    },
+                                                    {
+                                                        "id":  8,
+                                                        "potluck_id":  1,
+                                                        "dish":  "flavored rice (Pulav/lemon/tamarind/tomato rice)"
+                                                    },
+                                                    {
+                                                        "id":  9,
+                                                        "potluck_id":  1,
+                                                        "dish":  "desert"
+                                                    },
+                                                    {
+                                                        "id":  10,
+                                                        "potluck_id":  1,
+                                                        "dish":  "fruits"
+                                                    }
+                                                ],
+                                      "Count":  10
+                                  },
+                         "guests":  {
+                                        "value":  [
+                                                      {
+                                                          "id":  1,
+                                                          "name":  "Somil",
+                                                          "family_count":  1,
+                                                          "dishes":  [
+
+                                                                     ],
+                                                          "dish_ids":  [
+
+                                                                       ],
+                                                          "quantities":  [
+
+                                                                         ]
+                                                      },
+                                                      {
+                                                          "id":  2,
+                                                          "name":  "Kiran",
+                                                          "family_count":  1,
+                                                          "dishes":  [
+
+                                                                     ],
+                                                          "dish_ids":  [
+
+                                                                       ],
+                                                          "quantities":  [
+
+                                                                         ]
+                                                      },
+                                                      {
+                                                          "id":  3,
+                                                          "name":  "Arpita",
+                                                          "family_count":  1,
+                                                          "dishes":  [
+
+                                                                     ],
+                                                          "dish_ids":  [
+
+                                                                       ],
+                                                          "quantities":  [
+
+                                                                         ]
+                                                      },
+                                                      {
+                                                          "id":  4,
+                                                          "name":  "Teja",
+                                                          "family_count":  1,
+                                                          "dishes":  [
+
+                                                                     ],
+                                                          "dish_ids":  [
+
+                                                                       ],
+                                                          "quantities":  [
+
+                                                                         ]
+                                                      },
+                                                      {
+                                                          "id":  5,
+                                                          "name":  "Lakshman",
+                                                          "family_count":  1,
+                                                          "dishes":  [
+
+                                                                     ],
+                                                          "dish_ids":  [
+
+                                                                       ],
+                                                          "quantities":  [
+
+                                                                         ]
+                                                      },
+                                                      {
+                                                          "id":  6,
+                                                          "name":  "Sachin",
+                                                          "family_count":  1,
+                                                          "dishes":  [
+
+                                                                     ],
+                                                          "dish_ids":  [
+
+                                                                       ],
+                                                          "quantities":  [
+
+                                                                         ]
+                                                      },
+                                                      {
+                                                          "id":  7,
+                                                          "name":  "Sheetal",
+                                                          "family_count":  1,
+                                                          "dishes":  [
+
+                                                                     ],
+                                                          "dish_ids":  [
+
+                                                                       ],
+                                                          "quantities":  [
+
+                                                                         ]
+                                                      },
+                                                      {
+                                                          "id":  8,
+                                                          "name":  "Dhanashree",
+                                                          "family_count":  1,
+                                                          "dishes":  [
+
+                                                                     ],
+                                                          "dish_ids":  [
+
+                                                                       ],
+                                                          "quantities":  [
+
+                                                                         ]
+                                                      },
+                                                      {
+                                                          "id":  9,
+                                                          "name":  "Yogini",
+                                                          "family_count":  1,
+                                                          "dishes":  [
+
+                                                                     ],
+                                                          "dish_ids":  [
+
+                                                                       ],
+                                                          "quantities":  [
+
+                                                                         ]
+                                                      },
+                                                      {
+                                                          "id":  10,
+                                                          "name":  "Surya",
+                                                          "family_count":  4,
+                                                          "dishes":  [
+                                                                         "sambaar(1)",
+                                                                         "tomoto chutney(1)",
+                                                                         "plain rice(1)",
+                                                                         "curd(1)",
+                                                                         "papad(1)"
+                                                                     ],
+                                                          "dish_ids":  [
+                                                                           1,
+                                                                           2,
+                                                                           3,
+                                                                           4,
+                                                                           5
+                                                                       ],
+                                                          "quantities":  [
+                                                                             1,
+                                                                             1,
+                                                                             1,
+                                                                             1,
+                                                                             1
+                                                                         ]
+                                                      }
+                                                  ],
+                                        "Count":  10
+                                    },
+                         "name":  [
+                                      "Potluck Party",
+                                      "Potluck Party"
+                                  ],
+                         "id":  [
+                                    1,
+                                    2
+                                ]
+                     }
+                 ]
+}
