@@ -736,8 +736,8 @@ function PotluckView() {
           </div>
         )}
 
-        {/* Profile Dropdown (only show when burger menu requests it or when header is expanded) */}
-        {(showProfileDropdown && (headerExpanded || showBurgerMenu)) && (
+        {/* Profile Dropdown */}
+        {showProfileDropdown && (
             <div className="profile-dropdown">
               {userName ? (
                 <div className="current-user-profile">
