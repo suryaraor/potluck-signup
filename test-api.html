@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Potluck API</title>
+</head>
+<body>
+    <h1>Test Potluck Creation</h1>
+    <button onclick="testCreatePotluck()">Test Create Potluck</button>
+    <div id="result"></div>
+
+    <script>
+        async function testCreatePotluck() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing...';
+            
+            try {
+                const response = await fetch('http://localhost:3001/potlucks', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: 'Test Potluck',
+                        date: '2025-09-15',
+                        guestList: ['Alice', 'Bob'],
+                        menuItems: ['Salad', 'Main Dish']
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<h3>Success!</h3><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    resultDiv.innerHTML = `<h3>Error!</h3><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<h3>Network Error!</h3><pre>${error.message}</pre>`;
+            }
+        }
+    </script>
+</body>
+</html>

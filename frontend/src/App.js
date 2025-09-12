@@ -53,28 +53,51 @@ function PotluckList() {
       return;
     }
 
+    console.log('Creating potluck with data:', newPotluck);
+
     try {
       setLoading(true);
       const guestList = newPotluck.guestList ? newPotluck.guestList.split(',').map(g => g.trim()).filter(g => g) : [];
       const menuItems = newPotluck.menuItems ? newPotluck.menuItems.split(',').map(m => m.trim()).filter(m => m) : [];
 
-      const response = await axios.post(`${API}/potlucks`, {
-        ...newPotluck,
-        guestList,
-        menuItems
+      console.log('Processed data:', { ...newPotluck, guestList, menuItems });
+
+      // Use fetch instead of axios for debugging
+      const response = await fetch(`${API}/potlucks`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...newPotluck,
+          guestList,
+          menuItems
+        })
       });
 
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      const responseData = await response.json();
+      console.log('Response:', responseData);
       setSuccess('Potluck created successfully!');
       setNewPotluck({ name: '', date: '', guestList: '', menuItems: '' });
       setShowCreateForm(false);
       loadPotlucks();
       
-      // Navigate to the new potluck
-      setTimeout(() => {
-        navigate(`/potluck/${response.data.id}`);
-      }, 1000);
+      // Note: Navigation commented out for debugging
+      // setTimeout(() => {
+      //   navigate(`/potluck/${response.data.id}`);
+      // }, 1000);
     } catch (err) {
-      setError('Failed to create potluck');
+      console.error('Error creating potluck:', err);
+      console.error('Error response:', err.response);
+      alert(`Error creating potluck: ${err.response?.data?.error || err.message}`);
+      setError(`Failed to create potluck: ${err.response?.data?.error || err.message}`);
     } finally {
       setLoading(false);
     }
@@ -205,6 +228,7 @@ function PotluckView() {
   const [userName, setUserName] = useState('');
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showWhoAreYouOverlay, setShowWhoAreYouOverlay] = useState(false);
+  const [showSummaryOverlay, setShowSummaryOverlay] = useState(false);
   const [showDishActionModal, setShowDishActionModal] = useState(false);
   const [selectedDish, setSelectedDish] = useState(null);
   const [showNoteForm, setShowNoteForm] = useState(false);
@@ -500,6 +524,13 @@ function PotluckView() {
           <p>{potluck?.date || 'No date set'}</p>
         </div>
         <div className="profile-section">
+          <button 
+            className="summary-button"
+            onClick={() => setShowSummaryOverlay(true)}
+            title="Show potluck summary"
+          >
+            📋 Summary
+          </button>
           <div className="share-info">
             <small>Share this URL with guests</small>
           </div>
@@ -799,6 +830,82 @@ function PotluckView() {
                 }}
               >
                 Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Summary overlay */}
+      {showSummaryOverlay && (
+        <div className="overlay">
+          <div className="overlay-content">
+            <h2>Potluck Summary</h2>
+            <div className="summary-content">
+              <pre className="summary-text">
+{`Potluck Summary:
+
+Event: ${potluck?.name || 'Untitled Potluck'}
+Date & Time: ${potluck?.event_datetime ? new Date(potluck.event_datetime).toLocaleString() : 'Not set'}
+Location: ${potluck?.location || 'Not specified'}
+
+Total Guests: ${guests.length}
+Total Family Members: ${guests.reduce((sum, guest) => sum + (guest.family_count || 1), 0)}
+
+Guest List: ${guests.map(guest => guest.name).join(', ')}
+
+Dish Signups:
+${menu.map(dish => 
+  `• ${dish.dish || dish.name} - ${
+    dish.guest_name ? `Brought by: ${dish.guest_name}` : 'Still needed'
+  }`
+).join('\n')}
+
+Dishes Still Needed:
+${menu.filter(dish => !dish.guest_name).map(dish => `• ${dish.dish || dish.name}`).join('\n') || '• All dishes are assigned!'}
+`}
+              </pre>
+            </div>
+            <div className="summary-actions">
+              <button 
+                className="btn btn-primary"
+                onClick={() => {
+                  const summaryText = `Potluck Summary:
+
+Event: ${potluck?.name || 'Untitled Potluck'}
+Date & Time: ${potluck?.event_datetime ? new Date(potluck.event_datetime).toLocaleString() : 'Not set'}
+Location: ${potluck?.location || 'Not specified'}
+
+Total Guests: ${guests.length}
+Total Family Members: ${guests.reduce((sum, guest) => sum + (guest.family_count || 1), 0)}
+
+Guest List: ${guests.map(guest => guest.name).join(', ')}
+
+Dish Signups:
+${menu.map(dish => 
+  `• ${dish.dish || dish.name} - ${
+    dish.guest_name ? `Brought by: ${dish.guest_name}` : 'Still needed'
+  }`
+).join('\n')}
+
+Dishes Still Needed:
+${menu.filter(dish => !dish.guest_name).map(dish => `• ${dish.dish || dish.name}`).join('\n') || '• All dishes are assigned!'}
+`;
+                  navigator.clipboard.writeText(summaryText).then(() => {
+                    alert('Summary copied to clipboard!');
+                  }).catch(err => {
+                    console.error('Failed to copy to clipboard:', err);
+                    alert('Failed to copy to clipboard. Please try selecting and copying manually.');
+                  });
+                }}
+              >
+                📋 Copy to Clipboard
+              </button>
+              <button 
+                className="btn btn-secondary"
+                onClick={() => setShowSummaryOverlay(false)}
+              >
+                Close
               </button>
             </div>
           </div>

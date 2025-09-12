@@ -1,0 +1,42 @@
+POTLUCK DETAILS
+===============
+Name: Kiran going to III Potluck 9/13 6PM at Surya home
+Date: 2025-09-13
+
+DISH LIST (Comma-separated for copy/paste)
+==========================================
+sambaar, tomoto chtney, plain rice, curd, papad, gravy curry, chapati, flavored rice (Pulav/lemon/tamarind/tomato rice), desert, fruits
+
+GUEST LIST (Comma-separated for copy/paste)  
+==========================================
+Somil, Kiran, Arpita, Teja, Lakshman, Sachin, Sheetal, Dhanashree, Yogini, Surya
+
+GUEST SIGNUPS (Who's bringing what)
+===================================
+Arpita → tomoto chtney (1)
+Lakshman → fruits (1)
+Sheetal → desert (1)
+Surya → sambaar (1), plain rice (1), curd (1), papad (1)
+
+FAMILY COUNTS
+=============
+Somil: 1 person
+Kiran: 1 person  
+Arpita: 1 person
+Teja: 1 person
+Lakshman: 1 person
+Sachin: 2 people
+Sheetal: 1 person
+Dhanashree: 1 person
+Yogini: 1 person
+Surya: 4 people
+
+DISHES STILL NEEDED
+==================
+gravy curry
+chapati  
+flavored rice (Pulav/lemon/tamarind/tomato rice)
+
+GUESTS WITHOUT DISH ASSIGNMENTS
+===============================
+Somil, Kiran, Teja, Sachin, Dhanashree, Yogini

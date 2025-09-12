@@ -6,6 +6,11 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
 // Database configuration - supports both SQLite (local) and PostgreSQL (production)
 let db;
 const isProduction = process.env.NODE_ENV === 'production' || process.env.DATABASE_URL;
@@ -62,10 +67,18 @@ if (isProduction && process.env.DATABASE_URL) {
 } else {
   // SQLite for local development
   const sqlite3 = require('sqlite3').verbose();
+  const path = require('path');
   
-  db = new sqlite3.Database('./potluck.db', (err) => {
-    if (err) console.error('SQLite connection error:', err);
-    else console.log('Connected to SQLite database.');
+  const dbPath = path.join(__dirname, 'potluck.db');
+  console.log(`SQLite database path: ${dbPath}`);
+  
+  db = new sqlite3.Database(dbPath, (err) => {
+    if (err) {
+      console.error('SQLite connection error:', err);
+      process.exit(1);
+    } else {
+      console.log('Connected to SQLite database.');
+    }
   });
   
   // Initialize SQLite tables
@@ -97,7 +110,15 @@ if (isProduction && process.env.DATABASE_URL) {
       FOREIGN KEY(dish_id) REFERENCES menu_items(id)
     );
   `;
-  db.exec(initSql);
+  
+  db.exec(initSql, (err) => {
+    if (err) {
+      console.error('Error initializing SQLite tables:', err);
+      process.exit(1);
+    } else {
+      console.log('SQLite tables initialized successfully.');
+    }
+  });
 }
 
 // Database helper functions
@@ -523,4 +544,14 @@ app.get('/health', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Database: ${isProduction && process.env.DATABASE_URL ? 'PostgreSQL' : 'SQLite'}`);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  process.exit(1);
 });

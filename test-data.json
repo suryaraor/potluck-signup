@@ -1,0 +1,6 @@
+{
+  "name": "Test Potluck",
+  "date": "2025-09-15",
+  "guestList": ["Alice", "Bob"],
+  "menuItems": ["Salad", "Main Dish"]
+}
