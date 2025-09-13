@@ -1042,17 +1042,6 @@ button:active, .btn:active {
   touch-action: manipulation;
 }
 
-.dish-name {
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: #333;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  hyphens: auto;
-  max-width: 100%;
-  text-align: center;
-}
-
 .dish-guests-inline {
   font-size: 0.8rem;
   color: #059669;
@@ -1981,13 +1970,6 @@ button:active, .btn:active {
     width: 100%;
     box-sizing: border-box;
     margin: 0;
-  }
-  
-  .dish-name {
-    font-size: 0.8rem;
-    line-height: 1.2;
-    word-break: break-word;
-    overflow-wrap: break-word;
   }
   
   .dish-guests-inline {
