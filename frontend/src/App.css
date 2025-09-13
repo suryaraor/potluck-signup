@@ -855,7 +855,7 @@ button:active, .btn:active {
   background: linear-gradient(135deg, rgba(25, 135, 84, 0.1), rgba(25, 135, 84, 0.05)) !important;
   color: #198754 !important;
   text-shadow: none;
-  font-size: 0.85rem;
+  font-size: 1.8rem;
   padding: 0.25rem 0.5rem;
 }
 
@@ -903,8 +903,8 @@ button:active, .btn:active {
   }
   
   .guest-badge {
-    font-size: 0.7rem;
-    padding: 0.15rem 0.4rem;
+    font-size: 1.1rem;
+    padding: 0.25rem 0.5rem;
   }
 }
 
@@ -929,8 +929,8 @@ button:active, .btn:active {
   }
   
   .guest-badge {
-    font-size: 0.65rem;
-    padding: 0.1rem 0.3rem;
+    font-size: 1.0rem;
+    padding: 0.25rem 0.5rem;
   }
 }
 
@@ -943,6 +943,11 @@ button:active, .btn:active {
   .dish-name {
     font-size: 1.8rem;
     font-weight: 700;
+  }
+  
+  .guest-badge {
+    font-size: 1.4rem;
+    padding: 0.25rem 0.5rem;
   }
 }
 
