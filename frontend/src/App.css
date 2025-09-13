@@ -54,6 +54,11 @@ body {
   width: 100%;
 }
 
+/* When minimized, ensure controls are always on the right */
+.header.minimized .header-content {
+  justify-content: flex-end;
+}
+
 /* Minimized Header */
 .header.minimized {
   background: rgba(255, 255, 255, 0.95);
