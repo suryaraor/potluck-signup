@@ -846,8 +846,7 @@ button:active, .btn:active {
   color: #198754 !important;
   text-shadow: none;
   font-size: 0.75rem;
-  padding-right: 1.5rem;
-  position: relative;
+  padding: 0.25rem 0.5rem;
 }
 
 .dish-name {
@@ -858,32 +857,6 @@ button:active, .btn:active {
   word-wrap: break-word;
   color: #2c3e50;
   text-align: center;
-}
-
-.btn-remove-inline {
-  border: none;
-  background: none;
-  color: #dc3545;
-  font-size: 0.8rem;
-  line-height: 1;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  padding: 0;
-  margin: 0 0 0 0.2rem;
-  width: auto;
-  height: auto;
-  min-width: 0;
-  min-height: 0;
-  flex-shrink: 0;
-  position: absolute;
-  right: 0.2rem;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.btn-remove-inline:hover {
-  color: #b02a37;
-  transform: translateY(-50%) scale(1.1);
 }
 @media (max-width: 576px) {
   .dishes-grid {
@@ -919,26 +892,9 @@ button:active, .btn:active {
     line-height: 1.1;
   }
   
-  .btn-remove-inline {
-    font-size: 0.7rem;
-    right: 0.1rem;
-  }
-  
-  .dish-guests-list .badge {
-    font-size: 0.7rem;
-  }
-  
   .guest-badge {
     font-size: 0.6rem;
-    padding: 0.15rem 1rem 0.15rem 0.3rem;
-  }
-  
-  .btn-close-custom {
-    width: 10px;
-    height: 10px;
-    font-size: 7px;
-    top: -1px;
-    right: -1px;
+    padding: 0.15rem 0.5rem;
   }
 }
 
@@ -956,11 +912,6 @@ button:active, .btn:active {
   .dish-button {
     padding: 0.4rem;
     min-height: 110px;
-  }
-  
-  .btn-remove-inline {
-    font-size: 0.6rem;
-    right: 0.1rem;
   }
 }
 

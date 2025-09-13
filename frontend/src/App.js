@@ -858,18 +858,6 @@ function PotluckView() {
                         {dishGuests.map((guest, index) => (
                           <span key={guest.id} className="badge bg-success bg-opacity-75 text-dark me-1 guest-badge">
                             👤 {guest.name}
-                            {guest.name === userName && (
-                              <button 
-                                className="btn-remove-inline"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  removeUserDish(guest.guest_id, guest.dish_id);
-                                }}
-                                title="Remove this dish"
-                              >
-                                ×
-                              </button>
-                            )}
                           </span>
                         ))}
                       </div>
@@ -1039,12 +1027,31 @@ function PotluckView() {
             <h2>{selectedDish.dish}</h2>
             <p>What would you like to do?</p>
             <div className="modal-buttons">
-              <button 
-                className="btn btn-primary"
-                onClick={() => signUpForDish(selectedDish)}
-              >
-                🍽️ Sign Up for this Dish
-              </button>
+              {/* Check if user is already signed up for this dish */}
+              {userSelections.some(s => s.dish_id === selectedDish.id) ? (
+                <button 
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    // Find the user's guest entry for this dish
+                    const userGuestEntry = signedUpGuests.find(g => 
+                      g.name === userName && g.dish_id === selectedDish.id
+                    );
+                    if (userGuestEntry) {
+                      removeUserDish(userGuestEntry.guest_id, userGuestEntry.dish_id);
+                      setShowDishActionModal(false);
+                    }
+                  }}
+                >
+                  ❌ Cancel Signup
+                </button>
+              ) : (
+                <button 
+                  className="btn btn-primary"
+                  onClick={() => signUpForDish(selectedDish)}
+                >
+                  🍽️ Sign Up for this Dish
+                </button>
+              )}
               <button 
                 className="btn btn-secondary"
                 onClick={() => setShowNoteForm(true)}
