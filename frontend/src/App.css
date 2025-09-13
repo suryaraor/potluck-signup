@@ -778,7 +778,7 @@ button:active, .btn:active {
 .dish-card {
   display: flex;
   flex-direction: column;
-  min-height: 140px;
+  min-height: 100px;
   border: none;
   background: transparent;
 }
@@ -787,14 +787,23 @@ button:active, .btn:active {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   padding: 0.75rem;
   border-radius: 12px;
   transition: all 0.3s ease;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border: 2px solid rgba(108, 117, 125, 0.3);
-  min-height: 120px;
+  min-height: 80px;
+}
+
+.dish-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .dish-button:hover {
@@ -815,21 +824,22 @@ button:active, .btn:active {
 }
 
 .dish-name {
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   font-weight: 700;
-  margin-bottom: 0.4rem;
   line-height: 1.1;
   word-wrap: break-word;
   color: #2c3e50;
-  text-align: center;
+  text-align: left;
+  flex: 1;
+  margin: 0;
 }
 
 .dish-guests-list {
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem;
-  justify-content: center;
-  margin-top: 0.3rem;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .needs-someone {
@@ -845,19 +855,16 @@ button:active, .btn:active {
   background: linear-gradient(135deg, rgba(25, 135, 84, 0.1), rgba(25, 135, 84, 0.05)) !important;
   color: #198754 !important;
   text-shadow: none;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   padding: 0.25rem 0.5rem;
 }
 
-.dish-name {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 0.4rem;
-  line-height: 1.1;
-  word-wrap: break-word;
-  color: #2c3e50;
-  text-align: center;
+.needs-someone {
+  font-size: 0.9rem;
+  color: #6c757d;
+  font-style: italic;
 }
+
 @media (max-width: 576px) {
   .dishes-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -871,7 +878,7 @@ button:active, .btn:active {
   }
   
   .dish-card {
-    min-height: 140px;
+    min-height: 100px;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
@@ -879,22 +886,25 @@ button:active, .btn:active {
   
   .dish-button {
     padding: 0.5rem;
-    min-height: 120px;
+    min-height: 70px;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
   }
   
+  .dish-content {
+    gap: 0.3rem;
+  }
+  
   .dish-name {
-    font-size: 1.8rem;
+    font-size: 1.4rem;
     font-weight: 700;
-    margin-bottom: 0.3rem;
     line-height: 1.1;
   }
   
   .guest-badge {
-    font-size: 0.6rem;
-    padding: 0.15rem 0.5rem;
+    font-size: 0.7rem;
+    padding: 0.15rem 0.4rem;
   }
 }
 
@@ -906,12 +916,21 @@ button:active, .btn:active {
   }
   
   .dish-name {
-    font-size: 1.8rem;
+    font-size: 1.2rem;
   }
   
   .dish-button {
     padding: 0.4rem;
-    min-height: 110px;
+    min-height: 60px;
+  }
+  
+  .dish-content {
+    gap: 0.2rem;
+  }
+  
+  .guest-badge {
+    font-size: 0.65rem;
+    padding: 0.1rem 0.3rem;
   }
 }
 
@@ -922,7 +941,7 @@ button:active, .btn:active {
   }
   
   .dish-name {
-    font-size: 2.2rem;
+    font-size: 1.8rem;
     font-weight: 700;
   }
 }

@@ -852,20 +852,22 @@ function PotluckView() {
                     onClick={() => userName ? selectMenuItem(item) : setShowWhoAreYouOverlay(true)}
                     disabled={false}
                   >
-                    <div className="dish-name fw-bold">{item.dish}</div>
-                    {hasAnyGuests ? (
-                      <div className="dish-guests-list">
-                        {dishGuests.map((guest, index) => (
-                          <span key={guest.id} className="badge bg-success bg-opacity-75 text-dark me-1 guest-badge">
-                            👤 {guest.name}
-                          </span>
-                        ))}
-                      </div>
-                    ) : (
-                      <span className="needs-someone text-muted">
-                        <i className="fas fa-utensils me-1"></i>Need someone
-                      </span>
-                    )}
+                    <div className="dish-content">
+                      <div className="dish-name fw-bold">{item.dish}</div>
+                      {hasAnyGuests ? (
+                        <div className="dish-guests-list">
+                          {dishGuests.map((guest, index) => (
+                            <span key={guest.id} className="badge bg-success bg-opacity-75 text-dark me-1 guest-badge">
+                              👤 {guest.name}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="needs-someone text-muted">
+                          <i className="fas fa-utensils me-1"></i>Need someone
+                        </span>
+                      )}
+                    </div>
                   </button>
                   {itemNotes.length > 0 && (
                     <div className="dish-notes mt-2">
