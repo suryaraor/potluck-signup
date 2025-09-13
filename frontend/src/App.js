@@ -790,8 +790,18 @@ function PotluckView() {
         )}
       </div>
 
-      {error && <div className="error-message">{error}</div>}
-      {success && <div className="success-message">{success}</div>}
+      {error && (
+        <div className="alert alert-danger alert-dismissible fade show" role="alert">
+          {error}
+          <button type="button" className="btn-close" onClick={() => setError('')}></button>
+        </div>
+      )}
+      {success && (
+        <div className="alert alert-success alert-dismissible fade show" role="alert">
+          {success}
+          <button type="button" className="btn-close" onClick={() => setSuccess('')}></button>
+        </div>
+      )}
 
       <div className="main-content">
         {/* Menu Selection */}
@@ -816,7 +826,7 @@ function PotluckView() {
               }).join(', ')}</strong>
             </div>
           )}
-          <div className="menu-grid">
+          <div className="dishes-grid">
             {[...menu]
               .sort((a, b) => {
                 const aHasGuests = (guestsByDish[a.id] || []).length > 0;
@@ -836,52 +846,45 @@ function PotluckView() {
               const itemNotes = dishNotes[item.id] || [];
               
               return (
-                <div key={item.id} className={`menu-item-container ${!hasAnyGuests ? 'unassigned' : 'assigned'}`}>
+                <div key={item.id} className={`dish-card ${!hasAnyGuests ? 'unassigned' : 'assigned'}`}>
                   <button 
-                    className={`menu-button ${userHasSelected ? 'selected' : ''} ${!hasAnyGuests ? 'unselected' : ''} ${!userName ? 'disabled' : ''}`}
+                    className={`btn btn-outline-primary dish-button w-100 ${userHasSelected ? 'selected' : ''} ${!hasAnyGuests ? 'unselected' : ''} ${!userName ? 'disabled' : ''}`}
                     onClick={() => userName ? selectMenuItem(item) : setShowWhoAreYouOverlay(true)}
                     disabled={false}
                   >
-                    <div className="dish-name">{item.dish}</div>
+                    <div className="dish-name fw-bold">{item.dish}</div>
                     {hasAnyGuests ? (
-                      <div className="dish-guests-inline">
+                      <div className="dish-guests-list">
                         {dishGuests.map((guest, index) => (
-                          <span key={guest.id} className="guest-name-inline">
-                            {guest.name}
-                            {index < dishGuests.length - 1 && ', '}
+                          <span key={guest.id} className="badge bg-success bg-opacity-75 text-dark me-1 guest-badge position-relative">
+                            👤 {guest.name}
+                            {guest.name === userName && (
+                              <button 
+                                className="btn-close-custom"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  removeUserDish(guest.guest_id, guest.dish_id);
+                                }}
+                                title="Remove this dish"
+                              >
+                                ×
+                              </button>
+                            )}
                           </span>
                         ))}
                       </div>
                     ) : (
-                      <span className="needs-someone">🍽️ Need someone</span>
+                      <span className="needs-someone text-muted">
+                        <i className="fas fa-utensils me-1"></i>Need someone
+                      </span>
                     )}
                   </button>
-                  {hasAnyGuests && dishGuests.some(guest => guest.name === userName) && (
-                    <div className="remove-buttons-container">
-                      {dishGuests
-                        .filter(guest => guest.name === userName)
-                        .map(guest => (
-                          <button 
-                            key={guest.id}
-                            className="remove-btn-external"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              removeUserDish(guest.guest_id, guest.dish_id);
-                            }}
-                            title="Remove this dish"
-                          >
-                            × Remove
-                          </button>
-                        ))
-                      }
-                    </div>
-                  )}
                   {itemNotes.length > 0 && (
-                    <div className="dish-notes">
+                    <div className="dish-notes mt-2">
                       {itemNotes.map(note => (
-                        <div key={note.id} className="dish-note">
-                          <span className="note-author">{note.author}:</span>
-                          <span className="note-text">{note.text}</span>
+                        <div key={note.id} className="card card-body bg-light p-2 mb-1">
+                          <span className="fw-bold text-primary">{note.author}:</span>
+                          <span className="ms-2">{note.text}</span>
                         </div>
                       ))}
                     </div>
@@ -889,13 +892,13 @@ function PotluckView() {
                 </div>
               );
             })}
-            <div className="menu-item-container">
+            <div className="dish-card">
               <button 
-                className="menu-button add-dish-button"
+                className="btn btn-success w-100 h-100 add-dish-button"
                 onClick={addNewDish}
                 title="Add a new dish"
               >
-                + Add Dish
+                <i className="fas fa-plus me-2"></i>Add Dish
               </button>
             </div>
           </div>
