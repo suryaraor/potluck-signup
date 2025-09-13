@@ -751,6 +751,7 @@ function PotluckView() {
                       setUserName('');
                       localStorage.removeItem('potluckUserName');
                       setShowProfileDropdown(false);
+                      setShowWhoAreYouOverlay(true);
                     }}
                   >
                     Switch user
