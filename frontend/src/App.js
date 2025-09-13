@@ -856,11 +856,11 @@ function PotluckView() {
                     {hasAnyGuests ? (
                       <div className="dish-guests-list">
                         {dishGuests.map((guest, index) => (
-                          <span key={guest.id} className="badge bg-success bg-opacity-75 text-dark me-1 guest-badge position-relative">
+                          <span key={guest.id} className="badge bg-success bg-opacity-75 text-dark me-1 guest-badge">
                             👤 {guest.name}
                             {guest.name === userName && (
                               <button 
-                                className="btn-close-custom"
+                                className="btn-remove-inline"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   removeUserDish(guest.guest_id, guest.dish_id);
