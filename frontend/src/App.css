@@ -824,7 +824,7 @@ button:active, .btn:active {
 }
 
 .dish-name {
-  font-size: 2.2rem;
+  font-size: 1.8rem;
   font-weight: 700;
   line-height: 1.1;
   word-wrap: break-word;
@@ -855,7 +855,7 @@ button:active, .btn:active {
   background: linear-gradient(135deg, rgba(25, 135, 84, 0.1), rgba(25, 135, 84, 0.05)) !important;
   color: #198754 !important;
   text-shadow: none;
-  font-size: 1.8rem;
+  font-size: 1.4rem;
   padding: 0.25rem 0.5rem;
 }
 
