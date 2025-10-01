@@ -846,28 +846,50 @@ function PotluckView() {
               
               return (
                 <div key={item.id} className={`dish-card ${!hasAnyGuests ? 'unassigned' : 'assigned'}`}>
-                  <button 
-                    className={`btn btn-outline-primary dish-button w-100 ${userHasSelected ? 'selected' : ''} ${!hasAnyGuests ? 'unselected' : ''} ${!userName ? 'disabled' : ''}`}
-                    onClick={() => userName ? selectMenuItem(item) : setShowWhoAreYouOverlay(true)}
-                    disabled={false}
-                  >
-                    <div className="dish-content">
-                      <div className="dish-name fw-bold">{item.dish}</div>
-                      {hasAnyGuests ? (
-                        <div className="dish-guests-list">
-                          {dishGuests.map((guest, index) => (
-                            <span key={guest.id} className="badge bg-success bg-opacity-75 text-dark me-1 guest-badge">
-                              👤 {guest.name}
-                            </span>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="needs-someone text-muted">
-                          <i className="fas fa-utensils me-1"></i>Need someone
-                        </span>
-                      )}
-                    </div>
-                  </button>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <button 
+                      className={`btn btn-outline-primary dish-button w-100 ${userHasSelected ? 'selected' : ''} ${!hasAnyGuests ? 'unselected' : ''} ${!userName ? 'disabled' : ''}`}
+                      onClick={() => userName ? selectMenuItem(item) : setShowWhoAreYouOverlay(true)}
+                      disabled={false}
+                      style={{ flex: 1 }}
+                    >
+                      <div className="dish-content">
+                        <div className="dish-name fw-bold">{item.dish}</div>
+                        {hasAnyGuests ? (
+                          <div className="dish-guests-list">
+                            {dishGuests.map((guest, index) => (
+                              <span key={guest.id} className="badge bg-success bg-opacity-75 text-dark me-1 guest-badge">
+                                👤 {guest.name}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="needs-someone text-muted">
+                            <i className="fas fa-utensils me-1"></i>Need someone
+                          </span>
+                        )}
+                      </div>
+                    </button>
+                    <button
+                      className="btn btn-link text-danger ms-2"
+                      title="Remove menu item"
+                      style={{ fontSize: '1.5rem', padding: '0 8px' }}
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        if (window.confirm(`Remove menu item '${item.dish}'?`)) {
+                          try {
+                            await axios.delete(`${API}/potlucks/${id}/menu/${item.id}`);
+                            setSuccess('Menu item removed');
+                            loadPotluckData();
+                          } catch (err) {
+                            setError('Failed to remove menu item');
+                          }
+                        }
+                      }}
+                    >
+                      <i className="fas fa-trash"></i>
+                    </button>
+                  </div>
                   {itemNotes.length > 0 && (
                     <div className="dish-notes mt-2">
                       {itemNotes.map(note => (

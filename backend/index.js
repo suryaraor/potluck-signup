@@ -1,3 +1,29 @@
+// Delete a menu item from a potluck
+app.delete('/potlucks/:potluckId/menu/:menuId', async (req, res) => {
+  const { potluckId, menuId } = req.params;
+  try {
+    let sql, params;
+    if (isProduction && process.env.DATABASE_URL) {
+      sql = 'DELETE FROM menu_items WHERE id = $1 AND potluck_id = $2 RETURNING *';
+      params = [menuId, potluckId];
+    } else {
+      sql = 'DELETE FROM menu_items WHERE id = ? AND potluck_id = ?';
+      params = [menuId, potluckId];
+    }
+    const result = await queryDB(sql, params);
+    // For SQLite, result.changes; for Postgres, result.rowCount or result.rows
+    const deleted = (isProduction && process.env.DATABASE_URL)
+      ? (result.rows && result.rows.length > 0)
+      : (result.changes > 0);
+    if (!deleted) {
+      return res.status(404).json({ error: 'Menu item not found' });
+    }
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Delete menu item error:', err);
+    res.status(500).json({ error: 'Failed to delete menu item' });
+  }
+});
 const express = require('express');
 const cors = require('cors');
 const app = express();
