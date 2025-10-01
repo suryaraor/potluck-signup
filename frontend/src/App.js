@@ -91,10 +91,8 @@ function PotluckList() {
         throw new Error(errorData.error || `HTTP ${response.status}`);
       }
 
-      const data = await response.json();
-
-      const responseData = await response.json();
-      console.log('Response:', responseData);
+  const data = await response.json();
+  console.log('Response:', data);
       setSuccess('Potluck created successfully!');
       setNewPotluck({ name: '', date: '', guestList: '', menuItems: '' });
       setShowCreateForm(false);
