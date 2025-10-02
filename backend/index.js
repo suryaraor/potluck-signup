@@ -295,10 +295,11 @@ app.put('/potlucks/:id/menu/:menuId', async (req, res) => {
     const result = await queryDB(sql, params);
     
     if (isProduction && process.env.DATABASE_URL) {
-      if (result.rows && result.rows.length === 0) {
+      // queryDB already returns result.rows for PostgreSQL
+      if (!result || result.length === 0) {
         return res.status(404).json({ error: 'Menu item not found' });
       }
-      res.json(result.rows[0]);
+      res.json(result[0]);
     } else {
       if (result.changes === 0) {
         return res.status(404).json({ error: 'Menu item not found' });
@@ -327,9 +328,9 @@ app.delete('/potlucks/:potluckId/menu/:menuId', async (req, res) => {
       params = [menuId, potluckId];
     }
     const result = await queryDB(sql, params);
-    // For SQLite, result.changes; for Postgres, result.rowCount or result.rows
+    // For SQLite, result.changes; for Postgres, queryDB already returns result.rows
     const deleted = (isProduction && process.env.DATABASE_URL)
-      ? (result.rows && result.rows.length > 0)
+      ? (result && result.length > 0)
       : (result.changes > 0);
     if (!deleted) {
       return res.status(404).json({ error: 'Menu item not found' });
